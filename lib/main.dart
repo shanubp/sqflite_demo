@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_demo/model/student_model.dart';
 
 import 'functions/db_functions.dart';
+import 'functions/model/student_model.dart';
+import 'inner_join/function/function.dart';
+import 'inner_join/screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await openMyDatabase();
+  // await openMyDatabase();
+  await openMyCCDatabase();
   runApp(const MyApp());
 }
 
@@ -16,7 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MyHomePage(),
+      // home: const MyHomePage(),
+      home:  CountryCapitalScreen(),
     );
   }
 }

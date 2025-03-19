@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../model/student_model.dart';
+import 'model/student_model.dart';
+
 
 late Database _database;
 
