@@ -7,8 +7,8 @@ import 'inner_join/screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await openMyDatabase();
-  await openMyCCDatabase();
+  await openMyDatabase();
+  // await openMyCCDatabase();
   runApp(const MyApp());
 }
 
@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // home: const MyHomePage(),
-      home:  CountryCapitalScreen(),
+      home: const StudentsList(),
+      // home:  CountryCapitalScreen(),
     );
   }
 }
@@ -77,37 +77,99 @@ class _MyHomePageState extends State<MyHomePage> {
                 addStudent(student);
                 name.clear();
                 age.clear();
+                Navigator.pop(context);
               },
                   child: Text('ADD')),
 
-              FutureBuilder<List<StudentModel>>(
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text("Error: ${snapshot.error}"));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text("No students found"));
-                  }
+             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-                  List<StudentModel> students = snapshot.data!;
-                  return ListView.separated(
-                    shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final data = students[index];
-                        return ListTile(
-                          title: Text('name- ${data.name}'),
-                          subtitle: Text('age- ${data.age}'),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return Divider();
-                      },
-                      itemCount: students.length);
-                },
-                future: getAllStudent(),
+class StudentsList extends StatefulWidget {
+  const StudentsList({Key? key}) : super(key: key);
 
-              )
+  @override
+  State<StudentsList> createState() => _StudentsListState();
+}
+
+class _StudentsListState extends State<StudentsList> {
+  List<StudentModel> students = [];
+  bool isLoading = false;
+  int limit =7;
+  int offset = 0;
+  final ScrollController _scrollController = ScrollController();
+
+  Future<void> fetchStudents() async {
+    if(isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+    List<StudentModel> newStudent = await getAllStudents(limit: limit, offset: offset);
+    setState(() {
+      students.addAll(newStudent);
+      offset += limit;
+      isLoading = false;
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      fetchStudents();
+    }
+  }
+
+  @override
+  void initState() {
+    fetchStudents();
+    _scrollController.addListener(_onScroll);
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title:  ElevatedButton(onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(),));
+        },
+            child: Text('ADD')),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+                   students.isEmpty && !isLoading
+                       ? Center(child: Text("No students found")):
+                    Container(
+                      // height: 400,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black)
+                      ),
+                      child: ListView.builder(
+                       controller: _scrollController,
+                         shrinkWrap: true,
+                         itemBuilder: (context, index) {
+                           if (index >= students.length) {
+                             return isLoading ? Center(child: CircularProgressIndicator()) : SizedBox();
+                           }
+                           final data = students[index];
+                           return ListTile(
+                             title: Text('name- ${data.name}'),
+                             subtitle: Text('age- ${data.age}'),
+                           );
+                         },
+                        itemCount: students.length,
+                         // itemCount: students.isEmpty ? 0 : students.length + (isLoading ? 1 : 0),
+                      ),
+                    )
             ],
           ),
         ),

@@ -25,14 +25,21 @@ Future<void> addStudent(StudentModel model)async {
     'INSERT INTO student (name,age) VALUES (?,?)',
     [model.name,model.age]
   );
-  getAllStudent();
+  getAllStudents();
 }
+//
+// Future<List<StudentModel>> getAllStudent() async {
+//   final value = await _database.rawQuery('SELECT * FROM student');
+//   print(value);
 
-Future<List<StudentModel>> getAllStudent() async {
-  final value = await _database.rawQuery('SELECT * FROM student');
+// List<StudentModel> student = value.map((e) =>
+//     StudentModel.fromMap(e),).toList();
+// return student;
+// }
+
+
+Future<List<StudentModel>> getAllStudents({int limit = 0, int offset = 0}) async {
+  final value = await _database.rawQuery('SELECT * FROM student LIMIT ? OFFSET ?', [limit, offset]);
   print(value);
-
-List<StudentModel> student = value.map((e) =>
-    StudentModel.fromMap(e),).toList();
-return student;
+  return value.map((e) => StudentModel.fromMap(e)).toList();
 }
