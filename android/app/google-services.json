@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537976355187",
+    "project_id": "fnotification-28145",
+    "storage_bucket": "fnotification-28145.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537976355187:android:33284a7c1f832b1275ed06",
+        "android_client_info": {
+          "package_name": "com.example.sqflite_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdq_ZcOsdxhFlBneqlX_Lzn0CTCSXLrZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

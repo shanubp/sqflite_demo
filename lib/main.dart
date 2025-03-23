@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite_demo/firebase_notification/service/notification_service.dart';
 
+import 'firebase_options.dart';
 import 'functions/db_functions.dart';
 import 'functions/model/student_model.dart';
 import 'inner_join/function/function.dart';
@@ -9,6 +12,11 @@ import 'inner_join/screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await NotificationService.instance.initialize();
   await openMyDatabase();
   // await openMyCCDatabase();
   runApp(const MyApp());
@@ -122,7 +130,6 @@ class _StudentsListState extends State<StudentsList> {
         });
         offset++;
         getPaginatedData(limit: limit, page: offset).then((data) {
-
           setState(() {
             students.addAll(data);
             isLoading = false;
@@ -158,8 +165,7 @@ class _StudentsListState extends State<StudentsList> {
             },
             child: Text('ADD')),
       ),
-      body: 
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
@@ -168,38 +174,38 @@ class _StudentsListState extends State<StudentsList> {
               students.isEmpty && !isLoading
                   ? Center(child: Text("No students found"))
                   : SizedBox(
-                                height: limit * 70.0,
-                    child: Container(
-                    // height: 200,
-                        decoration:
-                            BoxDecoration(border: Border.all(color: Colors.black)),
-                        child: CustomScrollView(
-                          controller: _scrollController,
-                          slivers: [
-                            SliverList.builder(
-                              itemBuilder: (context, index) {
-                                if (index >= students.length) {
-                                  return isLoading
-                                      ? Center(child: CircularProgressIndicator())
-                                      : SizedBox();
-                                }
-                                final data = students[index];
-                                return ListTile(
-                                  title: Text('name- ${data.name}'),
-                                  subtitle: Text('age- ${data.age}'),
-                                );
-                              },
-                              itemCount: students.length,
-                            )
-                          ],
-                        )
-                        ),
-                  )
+                      height: limit * 70.0,
+                      child: Container(
+                          // height: 200,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black)),
+                          child: CustomScrollView(
+                            controller: _scrollController,
+                            slivers: [
+                              SliverList.builder(
+                                itemBuilder: (context, index) {
+                                  if (index >= students.length) {
+                                    return isLoading
+                                        ? Center(
+                                            child: CircularProgressIndicator())
+                                        : SizedBox();
+                                  }
+                                  final data = students[index];
+                                  return ListTile(
+                                    title: Text('name- ${data.name}'),
+                                    subtitle: Text('age- ${data.age}'),
+                                  );
+                                },
+                                itemCount: students.length,
+                              )
+                            ],
+                          )),
+                    )
             ],
           ),
         ),
       ),
-      
+
       // Container(
       //   height: 200,
       //   child: CustomScrollView(
